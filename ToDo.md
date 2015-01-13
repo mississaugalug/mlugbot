@@ -16,6 +16,7 @@ TO DO:
 - meow
 - roof (dog)
 - check (see below for example from #bash)
+- Private message from registered user to bot to channel (like that's what she said)
 
 ```
 <dualbus> http://sprunge.us/CRVa

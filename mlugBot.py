@@ -32,7 +32,7 @@ will log channel #test to the file 'test.log'.
 
 To run the script:
 
-    $ python ircLogBot.py <channel> <file>
+    $ python ircLogBot.py <bot nick> <channel> <file>
 """
 
 
@@ -327,7 +327,9 @@ class LogBot(irc.IRCClient):
 
     # Start Twitter feed
         elif msg == "!starttwitter" and user == "victorbrca":
+            msg = "Twitter started"
             print "Twitter started"
+            self.msg(channel, msg)
             task = LoopingCall(self.twitterFeed, channel)
             task.start(300)
 #            twitter_thread = TwitterThread(channel)

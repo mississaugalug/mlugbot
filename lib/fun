@@ -6,3 +6,4 @@ Command			       Description
 !moo                           Have you mooed today?
 !fortune                       Fortune cookie
 !facts			       Fun facts
+!insult                        Generate insult or insult someone ( insult > user)

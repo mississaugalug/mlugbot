@@ -441,6 +441,37 @@ class LogBot(irc.IRCClient):
 #                #time.sleep(.8)
 #            f.close()
 
+    # Insult
+        elif re.search('!insult', msg):
+            html = urllib.urlopen("http://www.insultgenerator.org").read()
+            soup = BeautifulSoup(html)
+            texts = soup.findAll(text=True)
+            #response = ""
+            i = soup.findAll(attrs={'class' : 'wrap'})[0].getText()
+            insult = i.encode('utf-8')
+            
+            with open('lib/swear', 'r') as swearDB:
+                swearwords = swearDB.read().splitlines()
+                for swear in swearwords:
+                    if swear in insult:
+                        count = len(swear)
+                        masked = ''
+                        for letter in list(swear):
+                            if count == len(swear) or count == 1:
+                                masked += letter
+                            else:
+                                masked += '*'
+                            count -= 1
+                        insult = insult.replace(swear, masked) 
+                
+            if re.search('>', msg):
+                usplit = msg.split('>', 1)[1]
+                user = re.sub(' ', '', usplit)
+                msg = "%s: %s" % (user, insult)
+            else:
+                msg = insult
+            self.msg(channel, msg)
+
     ###
     ## Messages not directed to me ###
     ###

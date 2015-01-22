@@ -17,6 +17,8 @@ TO DO:
 - roof (dog)
 - check (see below for example from #bash)
 - Private message from registered user to bot to channel (like that's what she said)
+- Regex checker
+- shellcheck
 
 ```
 <dualbus> http://sprunge.us/CRVa

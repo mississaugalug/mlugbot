@@ -66,7 +66,7 @@ auth=OAuth(access_token_key, access_token_secret, consumer_key, consumer_secret)
 #import threading
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-twitter_userlist = ['victorbrca', 'MississaugaLUG']
+#twitter_userlist = ['victorbrca', 'MississaugaLUG']
 
 myNick = (sys.argv[1])
 
@@ -449,7 +449,7 @@ class LogBot(irc.IRCClient):
             #response = ""
             i = soup.findAll(attrs={'class' : 'wrap'})[0].getText()
             insult = i.encode('utf-8')
-            
+
             with open('lib/swear', 'r') as swearDB:
                 swearwords = swearDB.read().splitlines()
                 for swear in swearwords:
@@ -462,8 +462,8 @@ class LogBot(irc.IRCClient):
                             else:
                                 masked += '*'
                             count -= 1
-                        insult = insult.replace(swear, masked) 
-                
+                        insult = insult.replace(swear, masked)
+
             if re.search('>', msg):
                 usplit = msg.split('>', 1)[1]
                 user = re.sub(' ', '', usplit)
@@ -507,6 +507,14 @@ class LogBot(irc.IRCClient):
             self.msg(channel, msg)
             self.logger.log("<%s> %s" % (self.nickname, msg))
 
+    # She said
+        else:
+            with open('lib/shesaid', 'r') as sheSaidDB:
+                sentences = sheSaidDB.read().splitlines()
+                for sentence in sentences:
+                    if re.search(sentence, msg, re.IGNORECASE):
+                        msg = "%s: That's what she said!" % user
+                        self.msg(channel, msg)
 
     ###
     ## Channel actions

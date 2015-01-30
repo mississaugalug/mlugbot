@@ -225,7 +225,7 @@ class LogBot(irc.IRCClient):
             count = 25
             logfile=open("var/log/irc/current.log")
             for i in range(count):
-                 #import time
+                 import time
                  line=logfile.next().strip()
                  msg = (line)
                  self.msg(user, msg)

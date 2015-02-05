@@ -43,7 +43,8 @@ from twisted.internet.task import LoopingCall
 from twisted.python import log
 
 # system imports
-import time, sys, re
+import sys, re
+import time
 
 # For URL Grabbing
 import urllib
@@ -66,7 +67,7 @@ auth=OAuth(access_token_key, access_token_secret, consumer_key, consumer_secret)
 #import threading
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-#twitter_userlist = ['victorbrca', 'MississaugaLUG']
+twitter_userlist = ['victorbrca', 'MississaugaLUG', 'BobJonkman']
 
 myNick = (sys.argv[1])
 
@@ -117,38 +118,28 @@ class LogBot(irc.IRCClient):
         self.logger.log("[I have joined %s]" % channel)
 
     def twitterFeed(self, channel):
-        #chan = channel
-        twitter_userlist = ['victorbrca', 'MississaugaLUG', 'BobJonkman']
-        #print twitter_userlist
-        #print "This is the thread running"
+        # twitter_userlist = ['victorbrca', 'MississaugaLUG', 'BobJonkman']
         for user in twitter_userlist:
             RawTweet = twitter.statuses.user_timeline(screen_name=user,count=1)[0]
             RawTweetDate = RawTweet['created_at']
             UTCRawTweetDate = re.sub(r'\+[0-9]{4}', 'UTC', RawTweetDate)
             print "last post raw date is %s" % UTCRawTweetDate
             TweetDateToTime = datetime.strptime(UTCRawTweetDate, '%a %b %d %H:%M:%S %Z %Y')
-            TweetDate = TweetDateToTime.strftime('%Y-%b-%d %H:%M')
-            #ptime = ptimetostr
-            #pdate = datetime.strptime(date, '%Y-%b-%d %H:%M')
-            GetFiveMinAgo = datetime.utcnow() - timedelta(minutes = 5)
-            FiveMinAgo = GetFiveMinAgo.strftime('%Y-%b-%d %H:%M')
-            print "Tweet time is: %s - Time 5 mins ago: %s" % (TweetDate, FiveMinAgo)
-            if FiveMinAgo < TweetDate:
-                CurrentTime = datetime.utcnow()
-                diff = relativedelta(CurrentTime, TweetDateToTime)
-                print "%s:%s" % (diff.minutes, diff.seconds)
+            # TweetDate = TweetDateToTime.strftime('%Y-%b-%d %H:%M')
+            # GetFiveMinAgo = datetime.utcnow() - timedelta(minutes = 5)
+            # FiveMinAgo = GetFiveMinAgo.strftime('%Y-%b-%d %H:%M')
+            # print "Tweet time is: %s - Time 5 mins ago: %s" % (TweetDate, FiveMinAgo)
+            CurrentTime = datetime.utcnow()
+            diff = relativedelta(CurrentTime, TweetDateToTime)
+            if (diff.days == 0 and diff.hours == 0 and diff.minutes < 5):
                 if diff.minutes < 1:
                     Ago = "%s seconds ago" % diff.seconds
                 else:
                     Ago = "%s minutes ago" % diff.minutes
                 tweet = ("@%s: %s (%s)" % (RawTweet["user"]["screen_name"], RawTweet["text"], Ago))
-#                print tweet
                 msg = tweet.encode('utf-8')
                 self.sendLine("PRIVMSG %s :%s" % (channel, msg))
-                #return
-#            else:
-#                print "no new tweets"
-            #time.sleep(10)
+
 
     def privmsg(self, user, channel, msg):
         """This will get called when the bot receives a message."""
@@ -225,7 +216,7 @@ class LogBot(irc.IRCClient):
             count = 25
             logfile=open("var/log/irc/current.log")
             for i in range(count):
-                 import time
+                 #import time
                  line=logfile.next().strip()
                  msg = (line)
                  self.msg(user, msg)
@@ -262,11 +253,11 @@ class LogBot(irc.IRCClient):
             month = soup.findAll("div", {"class": "dp-upcoming-text-month"})[positionalP].getText()
             day = soup.findAll("div", {"class": "dp-upcoming-text-day"})[positionalP].getText()
             startDate = soup.findAll(itemprop="startDate")[positionalP].getText()
-            time = startDate.split('-', 1)[0].split(' ', 1)[1]
+            meettime = startDate.split('-', 1)[0].split(' ', 1)[1]
             location = soup.findAll("meta", {"itemprop": "location"})[positionalP]['content']
             spltLoc = location.rsplit(',', 2)[0]
 
-            meet = 'The next \"%s\" will be on %s %s, %sat %s' % (title, month, day, time, spltLoc)
+            meet = 'The next \"%s\" will be on %s %s, %sat %s' % (title, month, day, meettime, spltLoc)
             msg = meet.encode('utf-8')
             self.msg(channel, msg)
             self.logger.log("<%s> %s" % (self.nickname, msg))
